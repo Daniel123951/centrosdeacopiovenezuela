@@ -3,13 +3,20 @@
 // ===============================
 
 // ⚠️ AQUÍ PEGA TU CONFIG DE FIREBASE
+
+
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_STORAGE_BUCKET",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyChUJmt3XD_a7ohI9-MshPyAWRNu2oxXuM",
+  authDomain: "mapa-solidario-venezuela.firebaseapp.com",
+  projectId: "mapa-solidario-venezuela",
+  storageBucket: "mapa-solidario-venezuela.firebasestorage.app",
+  messagingSenderId: "1099170285117",
+  appId: "1:1099170285117:web:50da9e979dbee8b24c4c54"
+
+
+
+
+  
 };
 
 // Inicializar Firebase
