@@ -78,13 +78,15 @@ function mostrarCentros(data) {
   data.forEach(c => {
     lista.innerHTML += `
       <div class="bg-white/10 p-4 rounded-lg shadow">
+
         <h3 class="text-lg font-bold">${c.nombre}</h3>
         <p>📍 ${c.direccion}</p>
         <p>🏙️ ${c.ciudad}</p>
         <p>📞 ${c.telefono}</p>
         <p>📝 ${c.nota}</p>
 
-        <div class="flex gap-2 mt-3">
+        <div class="flex gap-2 mt-3 flex-wrap">
+
           <a class="bg-blue-500 px-3 py-1 rounded"
              href="https://wa.me/${c.whatsapp}" target="_blank">
              WhatsApp
@@ -94,12 +96,22 @@ function mostrarCentros(data) {
              href="https://www.google.com/maps/search/?api=1&query=${c.direccion}" target="_blank">
              Maps
           </a>
+
+          <button onclick="eliminarCentro('${c.id}')"
+            class="bg-red-600 px-3 py-1 rounded">
+            Eliminar
+          </button>
+
+          <button onclick="editarCentro('${c.id}')"
+            class="bg-yellow-500 px-3 py-1 rounded">
+            Editar
+          </button>
+
         </div>
       </div>
     `;
   });
 }
-
 // ===============================
 // 🔍 BUSCADOR
 // ===============================
@@ -113,4 +125,35 @@ function filtrar() {
   );
 
   mostrarCentros(filtrados);
+}
+
+
+function eliminarCentro(id) {
+  if (confirm("¿Seguro que quieres eliminar este centro?")) {
+    db.collection("centros").doc(id).delete()
+      .then(() => {
+        alert("Centro eliminado");
+      });
+  }
+}
+
+function editarCentro(id) {
+  const nuevoNombre = prompt("Nuevo nombre:");
+  const nuevaDireccion = prompt("Nueva dirección:");
+  const nuevaCiudad = prompt("Nueva ciudad:");
+  const nuevoTelefono = prompt("Nuevo teléfono:");
+  const nuevaNota = prompt("Nueva nota:");
+
+  if (!nuevoNombre) return;
+
+  db.collection("centros").doc(id).update({
+    nombre: nuevoNombre,
+    direccion: nuevaDireccion,
+    ciudad: nuevaCiudad,
+    telefono: nuevoTelefono,
+    nota: nuevaNota
+  })
+  .then(() => {
+    alert("Centro actualizado correctamente");
+  });
 }
