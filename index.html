@@ -3,181 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centros de Acopio - Sismo Venezuela 24 de Junio</title>
-    <!-- Tailwind CSS -->
-    <script src="https://jsdelivr.net"></script>
-    <!-- Firebase SDK (Compat v9) -->
-    <script src="https://gstatic.com"></script>
-    <script src="https://gstatic.com"></script>
-</head>
-<body class="bg-gray-50 text-gray-800 font-sans min-height-screen flex flex-col justify-between">
-
-    <!-- Encabezado -->
-    <header class="bg-red-600 text-white shadow-md">
-        <div class="max-w-6xl mx-auto px-4 py-6 text-center">
-            <h1 class="text-3xl font-bold tracking-tight">SOS Venezuela: Centros de Acopio</h1>
-            <p class="mt-2 text-red-100 font-medium">Red de Recaudación y Donaciones - Sismo del 24 de Junio de 2026</p>
-        </div>
-    </header>
-
-    <!-- Contenido Principal -->
-    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full grid grid-cols-1 md:grid-cols-3 gap-8">
-        
-        <!-- Formulario para Agregar Centro -->
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 md:col-span-1 h-fit">
-            <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                📍 Registrar Centro
-            </h2>
-            <form id="form-acopio" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre del Lugar</label>
-                    <input type="text" id="nombre" required placeholder="Ej. Iglesia Chiquinquirá" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Estado</label>
-                    <select id="estado" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                        <option value="">Seleccione Estado</option>
-                        <option value="Anzoátegui">Anzoátegui</option>
-                        <option value="Aragua">Aragua</option>
-                        <option value="Bolívar">Bolívar</option>
-                        <option value="Carabobo">Carabobo</option>
-                        <option value="Distrito Capital">Distrito Capital</option>
-                        <option value="Lara">Lara</option>
-                        <option value="Miranda">Miranda</option>
-                        <option value="Monagas">Monagas</option>
-                        <option value="Sucre">Sucre</option>
-                        <option value="Zulia">Zulia</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Dirección Exacta</label>
-                    <textarea id="direccion" rows="2" required placeholder="Calle, Avenida, punto de referencia..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Insumos Solicitados</label>
-                    <input type="text" id="insumos" required placeholder="Ej. Agua, Medicinas, Alimentos" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Contacto / Teléfono</label>
-                    <input type="text" id="contacto" required placeholder="Ej. 0414-1234567" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                </div>
-                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors cursor-pointer shadow-sm">
-                    Publicar Centro
-                </button>
-            </form>
-        </section>
-
-        <!-- Buscador y Listado de Centros -->
-        <section class="md:col-span-2 space-y-6">
-            
-            <!-- Barra de Búsqueda -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-3">
-                <input type="text" id="buscar-texto" placeholder="Buscar por palabra clave (agua, alimentos, iglesia...)" class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                <select id="buscar-estado" class="sm:w-48 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
-                    <option value="">Todos los Estados</option>
-                    <option value="Anzoátegui">Anzoátegui</option>
-                    <option value="Aragua">Aragua</option>
-                    <option value="Bolívar">Bolívar</option>
-                    <option value="Carabobo">Carabobo</option>
-                    <option value="Distrito Capital">Distrito Capital</option>
-                    <option value="Lara">Lara</option>
-                    <option value="Miranda">Miranda</option>
-                    <option value="Monagas">Monagas</option>
-                    <option value="Sucre">Sucre</option>
-                    <option value="Zulia">Zulia</option>
-                </select>
-            </div>
-
-            <!-- Contenedor de Resultados -->
-            <div id="lista-centros" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- Se llena dinámicamente desde Firebase -->
-                <div class="col-span-full text-center text-gray-500 py-8">Cargando centros de acopio...</div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Pie de Página -->
-    <footer class="bg-gray-900 text-gray-400 text-sm mt-12 py-6 border-t border-gray-800">
-        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p>© 2026 Emergencia Sismo Venezuela. Información de carácter público.</p>
-            <p class="font-medium text-gray-300">Hecho por <span class="text-white border-b border-red-500 pb-0.5">danielmarcelo.info</span></p>
-        </div>
-    </footer>
-
-    <!-- LÓGICA DE JAVASCRIPT & CONFIGURACIÓN DE FIREBASE -->
-    <script>
-        // REPLAZA ESTA CONFIGURACIÓN CON LAS CREDENCIALES DE TU PROYECTO FIREBASE
-        const firebaseConfig = {
-            apiKey: "TU_API_KEY",
-            authDomain: "TU_PROJECT_://firebaseapp.com",
-            projectId: "TU_PROJECT_ID",
-            storageBucket: "TU_PROJECT_://appspot.com",
-            messagingSenderId: "TU_SENDER_ID",
-            appId: "TU_APP_ID"
-        };
-
-        // Inicializar Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // Referencias del DOM
-        const formAcopio = document.getElementById('form-acopio');
-        const listaCentros = document.getElementById('lista-centros');
-        const buscarTexto = document.getElementById('buscar-texto');
-        const buscarEstado = document.getElementById('buscar-estado');
-
-        let todosLosCentros = [];
-
-        // Guardar Datos en Firebase
-        formAcopio.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const nuevoCentro = {
-                nombre: document.getElementById('nombre').value,
-                estado: document.getElementById('estado').value,
-                direccion: document.getElementById('direccion').value,
-                insumos: document.getElementById('insumos').value,
-                contacto: document.getElementById('contacto').value,
-                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            try {
-                await db.collection('centros').add(nuevoCentro);
-                alert('¡Centro de acopio registrado con éxito!');
-                formAcopio.reset();
-            } catch (error) {
-                console.error("Error al guardar: ", error);
-                alert('Error al guardar en la base de datos.');
-            }
-        });
-
-        // Escuchar cambios en tiempo real de Firestore
-        db.collection('centros').orderBy('fechaCreacion', 'desc').onSnapshot((snapshot) => {
-            todosLosCentros = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            filtrarYRenderizar();
-        }, (error) => {
-            console.error("Error al leer datos: ", error);
-            listaCentros.innerHTML = `<div class="col-span-full text-center text-red-500 py-8">Configura las credenciales de Firebase para activar la base de datos.</div>`;
-        });
-
-        // Filtrar datos según búsqueda local para evitar lecturas excesivas de cuota
-        function filtrarYRenderizar() {
-            const texto = buscarTexto.value.toLowerCase();
-            const estadoFiltrado = buscarEstado.value;
-
-            const filtrados = todosLosCentros.filter(centro => {
-                const cumpleEstado = !estadoFiltrado || centro.estado === estadoFiltrado;
-                const cumpleTexto = !texto || 
-                    centro.nombre.toLowerCase().includes(texto) || 
-                    centro.direccion.toLowerCase().includes(texto) || 
-                    centro.insumos.toLowerCase().includes(texto);
-                return cumpleEstado && cumpleTexto;
-            });
-
-            renderizarCentros(filtrados);
+    <title>Centros de Acopio - Sismo Venezuela</title>
+    
+    <!-- Estilos Premium Integrados (Sin dependencias externas) -->
+    <style>
+        :root {
+            --primary: #dc2626;
+            --primary-hover: #b91c1c;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --radius: 12px;
         }
 
-        // Eventos de búsqueda
-        buscarTexto.addEventListener('input', filtrarYRenderizar);
-        buscarEstado.addEventListener('change', filtrarYRenderizar);
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-content: column;
+            flex-direction: column;
+        }
+
+        /* Banner de Alerta Superior */
+        .hero {
+            background: linear-gradient(135deg, #7f1d1d 0%, #1e1b4b 100%);
+            color: white;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid var(--primary);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(220, 38, 38, 0.15) 0%, transparent 80%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: #f1f5f9;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 300;
+            line-height: 1.5;
+        }
+
+        /* Contenedor Grid Principal */
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            flex-grow: 1;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 1.1fr 0.9fr;
+            }
+        }
+
+        /* Estilos de Tarjetas / Paneles */
+        .panel {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Formularios */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 700;
+            padding: 0.85rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+        }
+
+        .btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* Buscador Lateral */
+        .search-box {
+            background: #1e293b;
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box .panel-title {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .search-box .form-control {
+            background-color: #334155;
+            border-color: #475569;
+            color: white;
+        }
+
+        .search-box .form-control:focus {
+            background-color: #475569;
+            border-color: #ef4444;
+        }
+
+        /* Listado de Tarjetas Dinámicas */
+        .feed-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        /* Tarjeta de Centro de Acopio Individual */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--primary);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .badge {
+            background-color: #fee2e2;
+            color: #991b1b;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            white-space: nowrap;
+            border: 1px solid #fca5a5;
+        }
+
+        .card-body {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .meta-right {
+            text-align: right;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Estado Vacío / Cargando */
+        .status-msg {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+        }
+
+        /* Pie de página */
+        footer {
+            background-color: #0f172a;
+            color: #94a3b8;
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+            margin-top: auto;
+            border-top: 1px solid #1e293b;
+        }
+
+        footer a {
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Encabezado de la página -->
+    <header class="hero">
+        <h1>SOS Venezuela: Centros de Acopio</h1>
+        <p>Plataforma solidaria en tiempo real para coordinar la recolección y distribución de suministros tras el sismo del 24 de junio.</p>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <div class="container">
+        
+        <!-- Panel Izquierdo: Formulario de Registro -->
+        <section class="panel">
+            <h2 class="panel-title">📍 Registrar Punto de Recaudación</h2>
+            <form id="form-acopio">
+                <div class="form-group">
+                    <label for="nombre">Nombre de la Institución o Lugar</label>
+                    <input type="text" id="nombre" class="form-control" required placeholder="Ej. Bomberos, Centro Parroquial, Centro Comercial...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="estado">Estado / Región</label>
+                    <select id="estado" class="form-control" required>
+                        <option value="">Selecciona una región...</option>
+                        <option value="Distrito Capital">Distrito Capital</option>
+                        <option value="Anzoátegui">Anzoátegui</option>
+                        <option value="Aragua">Aragua</option>
+                        <option value="Carabobo">Carabobo</option>
+                        <option value="Miranda">Miranda</option>
+                        <option value="Sucre">Sucre</option>
+                        <option value="Zulia">Zulia</option>
+                        <option value="Otros Estados">Otros Estados</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="direccion">Dirección Detallada</label>
 
