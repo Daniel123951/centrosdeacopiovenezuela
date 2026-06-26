@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centros de Acopio - Sismo Venezuela 24 de Junio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://jsdelivr.net"></script>
+    <!-- Firebase SDK (Compat v9) -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-height-screen flex flex-col justify-between">
+
+    <!-- Encabezado -->
+    <header class="bg-red-600 text-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-6 text-center">
+            <h1 class="text-3xl font-bold tracking-tight">SOS Venezuela: Centros de Acopio</h1>
+            <p class="mt-2 text-red-100 font-medium">Red de Recaudación y Donaciones - Sismo del 24 de Junio de 2026</p>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Formulario para Agregar Centro -->
+        <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 md:col-span-1 h-fit">
+            <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                📍 Registrar Centro
+            </h2>
+            <form id="form-acopio" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nombre del Lugar</label>
+                    <input type="text" id="nombre" required placeholder="Ej. Iglesia Chiquinquirá" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Estado</label>
+                    <select id="estado" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="">Seleccione Estado</option>
+                        <option value="Anzoátegui">Anzoátegui</option>
+                        <option value="Aragua">Aragua</option>
+                        <option value="Bolívar">Bolívar</option>
+                        <option value="Carabobo">Carabobo</option>
+                        <option value="Distrito Capital">Distrito Capital</option>
+                        <option value="Lara">Lara</option>
+                        <option value="Miranda">Miranda</option>
+                        <option value="Monagas">Monagas</option>
+                        <option value="Sucre">Sucre</option>
+                        <option value="Zulia">Zulia</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Dirección Exacta</label>
+                    <textarea id="direccion" rows="2" required placeholder="Calle, Avenida, punto de referencia..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Insumos Solicitados</label>
+                    <input type="text" id="insumos" required placeholder="Ej. Agua, Medicinas, Alimentos" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Contacto / Teléfono</label>
+                    <input type="text" id="contacto" required placeholder="Ej. 0414-1234567" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-4 rounded-lg transition-colors cursor-pointer shadow-sm">
+                    Publicar Centro
+                </button>
+            </form>
+        </section>
+
+        <!-- Buscador y Listado de Centros -->
+        <section class="md:col-span-2 space-y-6">
+            
+            <!-- Barra de Búsqueda -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-3">
+                <input type="text" id="buscar-texto" placeholder="Buscar por palabra clave (agua, alimentos, iglesia...)" class="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                <select id="buscar-estado" class="sm:w-48 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                    <option value="">Todos los Estados</option>
+                    <option value="Anzoátegui">Anzoátegui</option>
+                    <option value="Aragua">Aragua</option>
+                    <option value="Bolívar">Bolívar</option>
+                    <option value="Carabobo">Carabobo</option>
+                    <option value="Distrito Capital">Distrito Capital</option>
+                    <option value="Lara">Lara</option>
+                    <option value="Miranda">Miranda</option>
+                    <option value="Monagas">Monagas</option>
+                    <option value="Sucre">Sucre</option>
+                    <option value="Zulia">Zulia</option>
+                </select>
+            </div>
+
+            <!-- Contenedor de Resultados -->
+            <div id="lista-centros" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Se llena dinámicamente desde Firebase -->
+                <div class="col-span-full text-center text-gray-500 py-8">Cargando centros de acopio...</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Pie de Página -->
+    <footer class="bg-gray-900 text-gray-400 text-sm mt-12 py-6 border-t border-gray-800">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>© 2026 Emergencia Sismo Venezuela. Información de carácter público.</p>
+            <p class="font-medium text-gray-300">Hecho por <span class="text-white border-b border-red-500 pb-0.5">danielmarcelo.info</span></p>
+        </div>
+    </footer>
+
+    <!-- LÓGICA DE JAVASCRIPT & CONFIGURACIÓN DE FIREBASE -->
+    <script>
+        // REPLAZA ESTA CONFIGURACIÓN CON LAS CREDENCIALES DE TU PROYECTO FIREBASE
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_PROJECT_://firebaseapp.com",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_PROJECT_://appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Referencias del DOM
+        const formAcopio = document.getElementById('form-acopio');
+        const listaCentros = document.getElementById('lista-centros');
+        const buscarTexto = document.getElementById('buscar-texto');
+        const buscarEstado = document.getElementById('buscar-estado');
+
+        let todosLosCentros = [];
+
+        // Guardar Datos en Firebase
+        formAcopio.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nuevoCentro = {
+                nombre: document.getElementById('nombre').value,
+                estado: document.getElementById('estado').value,
+                direccion: document.getElementById('direccion').value,
+                insumos: document.getElementById('insumos').value,
+                contacto: document.getElementById('contacto').value,
+                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('centros').add(nuevoCentro);
+                alert('¡Centro de acopio registrado con éxito!');
+                formAcopio.reset();
+            } catch (error) {
+                console.error("Error al guardar: ", error);
+                alert('Error al guardar en la base de datos.');
+            }
+        });
+
+        // Escuchar cambios en tiempo real de Firestore
+        db.collection('centros').orderBy('fechaCreacion', 'desc').onSnapshot((snapshot) => {
+            todosLosCentros = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            filtrarYRenderizar();
+        }, (error) => {
+            console.error("Error al leer datos: ", error);
+            listaCentros.innerHTML = `<div class="col-span-full text-center text-red-500 py-8">Configura las credenciales de Firebase para activar la base de datos.</div>`;
+        });
+
+        // Filtrar datos según búsqueda local para evitar lecturas excesivas de cuota
+        function filtrarYRenderizar() {
+            const texto = buscarTexto.value.toLowerCase();
+            const estadoFiltrado = buscarEstado.value;
+
+            const filtrados = todosLosCentros.filter(centro => {
+                const cumpleEstado = !estadoFiltrado || centro.estado === estadoFiltrado;
+                const cumpleTexto = !texto || 
+                    centro.nombre.toLowerCase().includes(texto) || 
+                    centro.direccion.toLowerCase().includes(texto) || 
+                    centro.insumos.toLowerCase().includes(texto);
+                return cumpleEstado && cumpleTexto;
+            });
+
+            renderizarCentros(filtrados);
+        }
+
+        // Eventos de búsqueda
+        buscarTexto.addEventListener('input', filtrarYRenderizar);
+        buscarEstado.addEventListener('change', filtrarYRenderizar);
+
